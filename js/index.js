@@ -33,14 +33,36 @@ function showDetails(bookInfo){
     description.innerText = bookInfo.description
     showPanel.appendChild(description)
 
+    const usersUL = document.createElement('ul')
+    usersUL.id = 'users'
+    showPanel.appendChild(usersUL)
     bookInfo.users.forEach(user => userList(user))
+
+    const button = document.createElement('button')
+    button.innerText = 'Like'
+    showPanel.appendChild(button)
+    button.addEventListener('click', e=>likeFunc(bookInfo))
 }
 
 function userList(user){
-    console.log(user.username)
-    const showPanel = document.getElementById('show-panel')
+    const userListLI = document.getElementById('users')
     const usernameLI = document.createElement('li')
     usernameLI.innerText = user.username
 
-    showPanel.appendChild(usernameLI)
+    userListLI.appendChild(usernameLI)
+}
+
+function likeFunc(bookInfo){
+    const newUser = {'id': 100, 'username': 'pouros'}
+    const users = [...bookInfo.users, newUser]
+    const usersUL = document.getElementById('users')
+
+    fetch(`http://localhost:3000/books/${bookInfo.id}`,{
+        method: 'PATCH',
+        headers: {'content-type': 'application/json'},
+        body: JSON.stringify({'users': users})
+    })
+    
+    usersUL.innerText = ''
+    users.forEach(user=>userList(user))
 }
